@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --border: #e2e5ea;
+  --text: #16191f;
+  --muted: #6b7280;
+  --primary: #0f766e;
+  --primary-fg: #ffffff;
+  --primary-soft: #e6f4f2;
+  --danger: #c2410c;
+  --danger-soft: #fdeee6;
+  --success: #15803d;
+  --success-soft: #e8f6ec;
+  --warning: #a16207;
+  --warning-soft: #fdf6e3;
+  --sidebar: #0f1720;
+  --sidebar-text: #c9d1db;
+  --sidebar-active: #1d2a36;
+}
+
+.dark {
+  --bg: #0b0f14;
+  --surface: #121821;
+  --surface-2: #18202b;
+  --border: #243040;
+  --text: #e6eaf0;
+  --muted: #8b96a5;
+  --primary: #2dd4bf;
+  --primary-fg: #04201d;
+  --primary-soft: #0f2f2c;
+  --danger: #fb923c;
+  --danger-soft: #3a1d0e;
+  --success: #4ade80;
+  --success-soft: #0f2a19;
+  --warning: #facc15;
+  --warning-soft: #2e2608;
+  --sidebar: #080b10;
+  --sidebar-text: #aab4c2;
+  --sidebar-active: #16202b;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-soft: var(--primary-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-active: var(--sidebar-active);
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body { background: var(--bg); color: var(--text); }
+body { font-family: var(--font-sans); font-size: 14px; }
+.num { font-variant-numeric: tabular-nums; }
+
+@media print {
+  aside, header, .no-print { display: none !important; }
+  body { background: #fff; color: #000; }
+  @page { size: A4; margin: 12mm; }
+}
