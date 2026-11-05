@@ -120,3 +120,54 @@ export interface Dashboard {
   emergency_fund: { target: number; current: number; progress_percent: number; account_balance: number } | null;
   budget: { plan_id: string; plan_status: string; planned: number; paid: number; remaining: number; utilization_percent: number; critical_open: number } | null;
 }
+
+// ---------- Batch 2 ----------
+export interface CreditCard {
+  id: string; name: string; active: boolean; outstanding: number; credit_limit: number | null;
+  available_credit: number | null; utilization_pct: number | null; billing_day: number | null; due_day: number | null;
+  next_due_date: string | null; spend_this_month: number; payments_this_month: number;
+}
+
+export type Frequency = "one_time" | "monthly" | "quarterly" | "half_yearly" | "yearly";
+export const FREQUENCIES: { value: Frequency; label: string }[] = [
+  { value: "monthly", label: "Monthly" },
+  { value: "quarterly", label: "Quarterly" },
+  { value: "half_yearly", label: "Half-yearly" },
+  { value: "yearly", label: "Yearly" },
+  { value: "one_time", label: "One time" },
+];
+
+export interface Commitment {
+  id: string; name: string; commitment_type_id: string | null; frequency: Frequency;
+  start_date: string | null; end_date: string | null; due_day: number | null;
+  installment_amount: number | null; total_amount: number; total_installments: number | null;
+  category_id: string | null; default_account_id: string | null;
+  status: "active" | "paused" | "completed" | "cancelled"; notes: string | null;
+}
+export interface CommitmentStatus {
+  id: string; total_items: number; paid_items: number; pending_items: number; overdue_items: number;
+  outstanding_amount: number; next_due_date: string | null;
+}
+export interface Installment {
+  id: string; commitment_id: string; commitment_name: string; commitment_type: string | null;
+  default_account_id: string | null; installment_no: number; due_date: string; amount: number;
+  paid_amount: number; remaining_amount: number; status: "pending" | "partial" | "paid" | "cancelled";
+  is_overdue: boolean; days_overdue: number | null; planned_amount: number; unplanned_amount: number;
+  plan_months: { year: number; month: number; amount: number }[] | null; remarks: string | null;
+}
+
+export interface MonthlyPlan {
+  id: string; plan_year: number; plan_month: number; month_start: string;
+  status: "draft" | "finalized" | "closed"; expected_income: number; planned_expense: number;
+  expected_savings: number; notes: string | null; paid_amount: number; remaining_amount: number;
+  item_count: number; suggested_count: number; paid_count: number; critical_open_count: number;
+}
+export type Priority = "low" | "normal" | "high" | "critical";
+export interface PlanItem {
+  id: string; plan_id: string; item_name: string; item_type: string;
+  source_type: "schedule" | "account" | "goal" | "plan_item" | null; source_id: string | null;
+  suggestion_reason: string | null; planned_amount: number; planned_date: string | null;
+  priority: Priority; status: string; account_id: string | null; account_name: string | null;
+  category_id: string | null; category_name: string | null; paid_amount: number;
+  remaining_amount: number; display_status: string; remarks: string | null;
+}

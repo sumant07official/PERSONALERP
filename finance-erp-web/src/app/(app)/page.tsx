@@ -79,7 +79,7 @@ export default function DashboardPage() {
                     {d.budget.critical_open > 0 && <> · <span className="text-danger">{d.budget.critical_open} critical open</span></>}
                   </p>
                 </>
-              ) : <p className="text-sm text-muted">No plan for this month yet. Monthly planning arrives in the next batch.</p>}
+              ) : <p className="text-sm text-muted">No plan for this month yet. <Link href="/planning" className="text-primary hover:underline">Generate one</Link>.</p>}
             </Card>
 
             <Card className="p-4">

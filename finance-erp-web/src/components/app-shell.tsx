@@ -15,13 +15,13 @@ const NAV: { group: string; items: NavItem[] }[] = [
     group: "Money", items: [
       { href: "/transactions", label: "Transactions", icon: "⇄" },
       { href: "/accounts", label: "Accounts", icon: "▤" },
-      { href: "/credit-cards", label: "Credit cards", icon: "▭", soon: true },
+      { href: "/credit-cards", label: "Credit cards", icon: "▭" },
     ],
   },
   {
     group: "Planning", items: [
-      { href: "/planning", label: "Monthly plan", icon: "◷", soon: true },
-      { href: "/commitments", label: "Commitments", icon: "↻", soon: true },
+      { href: "/planning", label: "Monthly plan", icon: "◷" },
+      { href: "/commitments", label: "Commitments", icon: "↻" },
       { href: "/goals", label: "Goals", icon: "◎", soon: true },
     ],
   },

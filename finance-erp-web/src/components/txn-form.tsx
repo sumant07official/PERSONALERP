@@ -45,8 +45,9 @@ const shape: Record<TxnType, { from?: string; to?: string; toOptional?: boolean;
   adjustment: { from: "Account" },
 };
 
-export function TxnForm({ open, onClose, onSaved, lookups, editing, defaultType }:
-  { open: boolean; onClose: () => void; onSaved: () => void; lookups: Lookups; editing?: TxnRow | null; defaultType?: TxnType }) {
+export function TxnForm({ open, onClose, onSaved, lookups, editing, defaultType, preset }:
+  { open: boolean; onClose: () => void; onSaved: () => void; lookups: Lookups; editing?: TxnRow | null; defaultType?: TxnType;
+    preset?: Partial<Pick<F, "from" | "to" | "amount" | "remarks">> }) {
   const toast = useToast();
   const [f, setF] = useState<F>(empty());
   const [requestId, setRequestId] = useState("");
@@ -54,8 +55,9 @@ export function TxnForm({ open, onClose, onSaved, lookups, editing, defaultType 
 
   useEffect(() => {
     if (!open) return;
-    setF(editing ? fromRow(editing) : empty(defaultType));
+    setF(editing ? fromRow(editing) : { ...empty(defaultType), ...preset });
     setRequestId(crypto.randomUUID()); // one id per form open → a double click can never post twice
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, editing, defaultType]);
 
   const s = shape[f.type];

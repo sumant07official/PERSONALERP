@@ -4,6 +4,7 @@
  */
 import { finance, masters, reports, supabase } from "./supabase/client";
 import type {
+  Commitment, CommitmentStatus, CreditCard, Installment, MonthlyPlan, PlanItem, Priority,
   Account, Dashboard, GoalOption, InstallmentOption, LedgerRow, MasterRow, TxnRow, TxnType,
 } from "./types";
 
@@ -90,6 +91,7 @@ export interface TxnPayload {
   reference_no?: string | null;
   attachment_path?: string | null;
   client_request_id?: string;
+  allocations?: { schedule_id: string; amount: number }[];
 }
 
 export async function postTransaction(p: TxnPayload) {
@@ -130,3 +132,87 @@ export async function listOpenInstallments(): Promise<InstallmentOption[]> {
   return check(await reports().from("vw_installments").select("id, commitment_name, installment_no, due_date, remaining_amount")
     .in("status", ["pending", "partial"]).order("due_date")) as InstallmentOption[];
 }
+
+// ---------- credit cards ----------
+
+export async function listCreditCards(): Promise<CreditCard[]> {
+  return check(await reports().from("vw_credit_cards").select("*").order("name")) as CreditCard[];
+}
+
+// ---------- commitments ----------
+export async function listCommitments(): Promise<(Commitment & { stats?: CommitmentStatus })[]> {
+  const [c, s] = await Promise.all([
+    finance().from("commitments").select("*").eq("is_deleted", false).order("name"),
+    reports().from("vw_commitment_status").select("*"),
+  ]);
+  const rows = check(c) as Commitment[];
+  const stats = new Map((check(s) as CommitmentStatus[]).map((x) => [x.id, x]));
+  return rows.map((r) => ({ ...r, stats: stats.get(r.id) }));
+}
+export async function getCommitment(id: string): Promise<Commitment> {
+  return check(await finance().from("commitments").select("*").eq("id", id).single()) as Commitment;
+}
+export type CommitmentInput = Omit<Commitment, "id">;
+export async function saveCommitment(input: Partial<CommitmentInput>, id?: string): Promise<Commitment> {
+  if (id) return check(await finance().from("commitments").update(input).eq("id", id).select().single()) as Commitment;
+  return check(await finance().from("commitments").insert(input).select().single()) as Commitment;
+}
+export async function deleteCommitment(id: string) {
+  check(await finance().from("commitments").update({ is_deleted: true }).eq("id", id).select("id"));
+}
+export async function generateSchedules(commitmentId: string, until?: string): Promise<number> {
+  return check(await finance().rpc("generate_schedules", { p_commitment_id: commitmentId, p_until: until ?? null })) as number;
+}
+export async function listInstallments(opts: { commitmentId?: string; openOnly?: boolean }): Promise<Installment[]> {
+  let q = reports().from("vw_installments").select("*");
+  if (opts.commitmentId) q = q.eq("commitment_id", opts.commitmentId);
+  if (opts.openOnly) q = q.in("status", ["pending", "partial"]);
+  return check(await q.order("due_date").order("installment_no")) as Installment[];
+}
+export async function cancelSchedule(id: string, reason: string) {
+  return check(await finance().rpc("cancel_schedule", { p_schedule_id: id, p_reason: reason || null }));
+}
+export async function restoreSchedule(id: string) {
+  return check(await finance().rpc("restore_schedule", { p_schedule_id: id }));
+}
+export async function distributeOutstanding(ids: string[], months: string[], mode: "equal" | "all" | "custom", amounts?: number[]) {
+  return check(await finance().rpc("distribute_outstanding", {
+    p_schedule_ids: ids, p_months: months, p_mode: mode, p_amounts: mode === "custom" ? amounts : null,
+  }));
+}
+export async function clearPaymentPlans(ids: string[]) {
+  return check(await finance().rpc("clear_payment_plans", { p_schedule_ids: ids })) as number;
+}
+
+// ---------- monthly plan ----------
+export async function getPlan(year: number, month: number): Promise<MonthlyPlan | null> {
+  const res = await reports().from("vw_monthly_plans").select("*").eq("plan_year", year).eq("plan_month", month).maybeSingle();
+  return check(res) as MonthlyPlan | null;
+}
+export async function generatePlan(year: number, month: number) {
+  return check(await finance().rpc("generate_month_plan", { p_year: year, p_month: month }));
+}
+export async function listPlanItems(planId: string): Promise<PlanItem[]> {
+  return check(await reports().from("vw_plan_items").select("*").eq("plan_id", planId)) as PlanItem[];
+}
+export async function updatePlan(planId: string, input: { expected_income?: number; notes?: string | null }) {
+  return check(await finance().from("monthly_plans").update(input).eq("id", planId).select("id"));
+}
+export interface PlanItemInput {
+  item_name?: string; item_type?: string; planned_amount?: number; planned_date?: string | null;
+  priority?: Priority; status?: string; account_id?: string | null; category_id?: string | null; remarks?: string | null;
+}
+export async function savePlanItem(input: PlanItemInput & { plan_id?: string }, id?: string) {
+  if (id) return check(await finance().from("plan_items").update(input).eq("id", id).select("id"));
+  return check(await finance().from("plan_items").insert(input).select("id"));
+}
+export async function deletePlanItem(id: string) {
+  check(await finance().from("plan_items").delete().eq("id", id).select("id"));
+}
+export async function payPlanItem(itemId: string, fromAccountId: string, amount: number, date: string, requestId: string) {
+  return check(await finance().rpc("pay_plan_item", {
+    p_item_id: itemId, p_from_account_id: fromAccountId, p_amount: amount, p_date: date, p_client_request_id: requestId,
+  }));
+}
+export async function finalizePlan(planId: string) { return check(await finance().rpc("finalize_month_plan", { p_plan_id: planId })); }
+export async function reopenPlan(planId: string) { return check(await finance().rpc("reopen_month_plan", { p_plan_id: planId })); }

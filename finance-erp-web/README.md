@@ -39,7 +39,17 @@ Open http://localhost:3000 and create your account on the login page.
 | Transactions | All 7 types, search, type pills, account + date filters, pagination, edit, delete with reversal, show deleted, daily spending (many lines at once), CSV export |
 | Masters | Categories, payment modes, commitment types, goal types (add, edit, deactivate, delete) |
 
-Next batches: credit cards, commitments + carry-forward, monthly plan, goals, reports, calendar, import.
+## Batch 2 (done)
+
+| Screen | Features |
+|---|---|
+| Credit cards | Outstanding, limit utilization bar, available credit, next due date, spent/paid this month, Pay bill, Add spend, Ledger |
+| Commitments | Add/edit/delete, frequencies (monthly → yearly, one time), installment or total+count, auto-generated installments, progress, outstanding, overdue |
+| Commitment detail | Installments table, multi-select → Pay (oldest first), Spread across months (equal / all / custom), Clear plan, Cancel/Restore, Generate more |
+| Open installments | Carry-forward list across all commitments with the same actions |
+| Monthly plan | Generate draft with reason per item, accept/reject, edit amount/date/priority, add manual items, pay from plan, spread an installment, defer, finalize/reopen, expected income, notes, export, print |
+
+Next batches: goals, reports, calendar, data import.
 
 ## Notes
 
