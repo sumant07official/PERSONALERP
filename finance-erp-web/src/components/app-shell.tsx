@@ -10,7 +10,7 @@ import { ToastProvider, cx } from "./ui";
 
 type NavItem = { href: string; label: string; icon: string; soon?: boolean };
 const NAV: { group: string; items: NavItem[] }[] = [
-  { group: "Overview", items: [{ href: "/", label: "Dashboard", icon: "▦" }] },
+  { group: "Overview", items: [{ href: "/", label: "Dashboard", icon: "▦" }, { href: "/calendar", label: "Calendar", icon: "▣" }] },
   {
     group: "Money", items: [
       { href: "/transactions", label: "Transactions", icon: "⇄" },
@@ -22,13 +22,15 @@ const NAV: { group: string; items: NavItem[] }[] = [
     group: "Planning", items: [
       { href: "/planning", label: "Monthly plan", icon: "◷" },
       { href: "/commitments", label: "Commitments", icon: "↻" },
-      { href: "/goals", label: "Goals", icon: "◎", soon: true },
+      { href: "/goals", label: "Goals", icon: "◎" },
     ],
   },
   {
     group: "More", items: [
-      { href: "/reports", label: "Reports", icon: "▥", soon: true },
-      { href: "/calendar", label: "Calendar", icon: "▣", soon: true },
+      { href: "/reports", label: "Reports", icon: "▥" },
+      { href: "/assets", label: "Assets", icon: "◆" },
+      { href: "/tasks", label: "Tasks", icon: "✓" },
+      { href: "/import", label: "Import", icon: "⇪" },
       { href: "/masters", label: "Masters", icon: "≡" },
     ],
   },

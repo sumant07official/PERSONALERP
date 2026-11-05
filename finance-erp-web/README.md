@@ -49,7 +49,18 @@ Open http://localhost:3000 and create your account on the login page.
 | Open installments | Carry-forward list across all commitments with the same actions |
 | Monthly plan | Generate draft with reason per item, accept/reject, edit amount/date/priority, add manual items, pay from plan, spread an installment, defer, finalize/reopen, expected income, notes, export, print |
 
-Next batches: goals, reports, calendar, data import.
+## Batch 3 (done)
+
+| Screen | Features |
+|---|---|
+| Goals | Progress cards, monthly amount needed for the target date, add money (goal contribution), history, edit/delete, linked account |
+| Reports | Income vs expense (3–24 months, bar chart + table), spending by category (month), append-only audit history, CSV export, print |
+| Calendar | Month grid (Mon–Sun) with installments, card bill dues, plan items, tasks and goal targets; filter by type; day list with links |
+| Import | CSV / .xlsx upload, column mapping (amount or debit/credit), preview with row errors, all-or-nothing import, undo, template download |
+| Tasks | Add/edit/delete, priority, due date, done toggle, open/done filters |
+| Assets | Add/edit/delete, cost vs current value, gain/loss, totals (feeds net worth), CSV export |
+
+All web modules are complete. Next: Android app (Expo) with the same features.
 
 ## Notes
 

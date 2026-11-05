@@ -171,3 +171,38 @@ export interface PlanItem {
   category_id: string | null; category_name: string | null; paid_amount: number;
   remaining_amount: number; display_status: string; remarks: string | null;
 }
+
+// ---------- Batch 3 ----------
+export interface Goal {
+  id: string; name: string; goal_type_id: string | null; goal_type: string | null; account_id: string | null;
+  account_name: string | null; target_amount: number; current_amount: number; remaining_amount: number;
+  progress_percent: number; target_date: string | null; monthly_needed: number | null;
+  contribution_count: number; last_contribution_date: string | null;
+  status: "active" | "achieved" | "paused" | "cancelled"; notes: string | null;
+}
+export interface GoalContribution { id: string; contribution_date: string; amount: number; remarks: string | null; transaction_id: string | null; }
+export interface MonthlySummary {
+  month_start: string; income: number; expense: number; commitment_payments: number; goal_contributions: number;
+  transfers: number; credit_card_payments: number; net_savings: number; transaction_count: number;
+}
+export interface CategorySpend { month_start: string; category_id: string | null; category_name: string; amount: number; transaction_count: number; }
+export interface HistoryLog {
+  id: string; entity_type: string; entity_id: string; action: string; old_value: Record<string, unknown> | null;
+  new_value: Record<string, unknown> | null; remarks: string | null; created_at: string;
+}
+export interface CalendarEvent {
+  event_date: string; event_type: "installment" | "plan_item" | "task" | "goal_target" | "card_due";
+  title: string; amount: number | null; status: string; ref_table: string; ref_id: string;
+}
+export interface ImportBatch {
+  id: string; file_name: string | null; source: string; row_count: number; posted_count: number;
+  total_amount: number; status: "posted" | "undone"; created_at: string; undone_at: string | null;
+}
+export interface Task {
+  id: string; title: string; description: string | null; due_date: string | null;
+  priority: Priority; status: "pending" | "in_progress" | "done" | "cancelled"; completed_at: string | null;
+}
+export interface Asset {
+  id: string; name: string; asset_type: string; purchase_value: number; current_value: number;
+  purchase_date: string | null; status: string;
+}

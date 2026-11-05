@@ -47,7 +47,7 @@ const shape: Record<TxnType, { from?: string; to?: string; toOptional?: boolean;
 
 export function TxnForm({ open, onClose, onSaved, lookups, editing, defaultType, preset }:
   { open: boolean; onClose: () => void; onSaved: () => void; lookups: Lookups; editing?: TxnRow | null; defaultType?: TxnType;
-    preset?: Partial<Pick<F, "from" | "to" | "amount" | "remarks">> }) {
+    preset?: Partial<Pick<F, "from" | "to" | "amount" | "remarks" | "goal">> }) {
   const toast = useToast();
   const [f, setF] = useState<F>(empty());
   const [requestId, setRequestId] = useState("");

@@ -1,0 +1,26 @@
+{
+  "cli": {
+    "appVersionSource": "local"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL":"https://foceiczwbtiuvbindgps.supabase.co/",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY":"sb_publishable_j0_RCFttDfxtpwV1jarU4A_d9qr2cvK"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL":"https://foceiczwbtiuvbindgps.supabase.co/",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY":"sb_publishable_j0_RCFttDfxtpwV1jarU4A_d9qr2cvK"
+      }
+    }
+  }
+}

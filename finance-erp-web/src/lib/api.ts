@@ -4,6 +4,7 @@
  */
 import { finance, masters, reports, supabase } from "./supabase/client";
 import type {
+  Asset, CalendarEvent, CategorySpend, Goal, GoalContribution, HistoryLog, ImportBatch, MonthlySummary, Task,
   Commitment, CommitmentStatus, CreditCard, Installment, MonthlyPlan, PlanItem, Priority,
   Account, Dashboard, GoalOption, InstallmentOption, LedgerRow, MasterRow, TxnRow, TxnType,
 } from "./types";
@@ -216,3 +217,63 @@ export async function payPlanItem(itemId: string, fromAccountId: string, amount:
 }
 export async function finalizePlan(planId: string) { return check(await finance().rpc("finalize_month_plan", { p_plan_id: planId })); }
 export async function reopenPlan(planId: string) { return check(await finance().rpc("reopen_month_plan", { p_plan_id: planId })); }
+
+// ---------- goals ----------
+export async function listGoals(): Promise<Goal[]> {
+  return check(await reports().from("vw_goal_progress").select("*").order("status").order("name")) as Goal[];
+}
+export interface GoalInput { name: string; goal_type_id: string | null; target_amount: number; target_date: string | null; status: Goal["status"]; notes: string | null; account_id: string | null; }
+export async function saveGoal(input: GoalInput, id?: string) {
+  if (id) return check(await finance().from("goals").update(input).eq("id", id).select("id"));
+  return check(await finance().from("goals").insert(input).select("id"));
+}
+export async function deleteGoal(id: string) {
+  check(await finance().from("goals").update({ is_deleted: true }).eq("id", id).select("id"));
+}
+export async function listGoalContributions(goalId: string): Promise<GoalContribution[]> {
+  return check(await finance().from("goal_contributions").select("id, contribution_date, amount, remarks, transaction_id")
+    .eq("goal_id", goalId).order("contribution_date", { ascending: false })) as GoalContribution[];
+}
+
+// ---------- reports ----------
+export async function listMonthlySummary(fromMonth: string): Promise<MonthlySummary[]> {
+  return check(await reports().from("vw_monthly_summary").select("*").gte("month_start", fromMonth).order("month_start")) as MonthlySummary[];
+}
+export async function listCategorySpend(month: string): Promise<CategorySpend[]> {
+  return check(await reports().from("vw_category_spend").select("*").eq("month_start", month).order("amount", { ascending: false })) as CategorySpend[];
+}
+export async function listHistory(limit = 100): Promise<HistoryLog[]> {
+  return check(await finance().from("history_logs").select("*").order("created_at", { ascending: false }).limit(limit)) as HistoryLog[];
+}
+
+// ---------- calendar ----------
+export async function listCalendar(from: string, to: string): Promise<CalendarEvent[]> {
+  return check(await reports().from("vw_calendar_events").select("*").gte("event_date", from).lte("event_date", to).order("event_date")) as CalendarEvent[];
+}
+
+// ---------- import ----------
+export async function importTransactions(fileName: string, source: "csv" | "excel", items: TxnPayload[]): Promise<ImportBatch> {
+  return check(await finance().rpc("import_transactions", { p_file_name: fileName, p_source: source, p_items: items })) as ImportBatch;
+}
+export async function listImports(): Promise<ImportBatch[]> {
+  return check(await finance().from("import_batches").select("*").order("created_at", { ascending: false }).limit(50)) as ImportBatch[];
+}
+export async function undoImport(id: string) { return check(await finance().rpc("undo_import", { p_batch_id: id })); }
+
+// ---------- tasks & assets ----------
+export async function listTasks(): Promise<Task[]> {
+  return check(await finance().from("tasks").select("*").eq("is_deleted", false).order("status").order("due_date", { nullsFirst: false })) as Task[];
+}
+export async function saveTask(input: Partial<Task>, id?: string) {
+  if (id) return check(await finance().from("tasks").update(input).eq("id", id).select("id"));
+  return check(await finance().from("tasks").insert(input).select("id"));
+}
+export async function deleteTask(id: string) { check(await finance().from("tasks").update({ is_deleted: true }).eq("id", id).select("id")); }
+export async function listAssets(): Promise<Asset[]> {
+  return check(await finance().from("assets").select("*").eq("is_deleted", false).order("name")) as Asset[];
+}
+export async function saveAsset(input: Partial<Asset>, id?: string) {
+  if (id) return check(await finance().from("assets").update(input).eq("id", id).select("id"));
+  return check(await finance().from("assets").insert(input).select("id"));
+}
+export async function deleteAsset(id: string) { check(await finance().from("assets").update({ is_deleted: true }).eq("id", id).select("id")); }
